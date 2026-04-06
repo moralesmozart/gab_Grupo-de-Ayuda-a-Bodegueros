@@ -347,15 +347,30 @@ function DogContinuaFotosBlank({ dog }: { dog: Dog }) {
       <p className="dog-blank__intro dog-blank__intro--compact">
         Si <span className="dog-blank__name">{dog.name}</span> forma parte de tu familia, pega o inserta aquí instantes de su nueva vida (impreso o álbum).
       </p>
-      <div className="dog-blank__photo-grid" aria-hidden="true">
-        <div className="dog-blank__photo-slot">
-          <span>Foto 1</span>
+      <div className="dog-blank__photo-flow" aria-hidden="true">
+        <div className="dog-blank__photo-row">
+          <div className="dog-blank__photo-slot">
+            <span>Foto 1</span>
+          </div>
+          <div className="dog-blank__photo-note">
+            <span className="dog-blank__photo-note__label">Notas</span>
+          </div>
         </div>
-        <div className="dog-blank__photo-slot">
-          <span>Foto 2</span>
+        <div className="dog-blank__photo-row">
+          <div className="dog-blank__photo-note">
+            <span className="dog-blank__photo-note__label">Notas</span>
+          </div>
+          <div className="dog-blank__photo-slot">
+            <span>Foto 2</span>
+          </div>
         </div>
-        <div className="dog-blank__photo-slot dog-blank__photo-slot--wide">
-          <span>Foto 3</span>
+        <div className="dog-blank__photo-row">
+          <div className="dog-blank__photo-slot">
+            <span>Foto 3</span>
+          </div>
+          <div className="dog-blank__photo-note">
+            <span className="dog-blank__photo-note__label">Notas</span>
+          </div>
         </div>
       </div>
     </div>
