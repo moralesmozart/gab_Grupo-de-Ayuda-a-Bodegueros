@@ -4,7 +4,7 @@ import HTMLFlipBook from "react-pageflip";
 import BookPage from "./BookPage";
 import AudioControl from "./AudioControl";
 import { dogs, type Dog } from "../data/dogs";
-import { gabCoverIntro, gabIntroLeft, gabIntroRight } from "../data/gabIntro";
+import { gabCoverIntro, gabCoverTagline, gabIntroLeft, gabIntroRight } from "../data/gabIntro";
 import { GAB_ADOPTION, GAB_INSTAGRAM, GAB_LOGO_URL, GAB_SITE } from "../data/constants";
 
 const GAB_CONTACT_EMAIL = "info@grupoayudabodegueros.org";
@@ -167,7 +167,7 @@ export default function GabBook() {
                 />
               </div>
               <div className="cover-brochure__banner">Grupo de Ayuda a Bodegueros</div>
-              <div className="cover-brochure__body">{paragraphs(gabCoverIntro)}</div>
+              <p className="cover-brochure__tagline">{gabCoverTagline}</p>
               <p className="cover-brochure__hint">Pasa la página para continuar</p>
             </div>
           </BookPage>
@@ -175,7 +175,10 @@ export default function GabBook() {
           <BookPage side="left">
             <header className="page-brand">G.A.B</header>
             <h3 className="section-title">Nuestra historia</h3>
-            <div className="story-block">{paragraphs(gabIntroLeft)}</div>
+            <div className="story-block">
+              {paragraphs(gabCoverIntro)}
+              {paragraphs(gabIntroLeft)}
+            </div>
           </BookPage>
 
           <BookPage side="right">

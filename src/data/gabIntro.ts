@@ -1,4 +1,8 @@
-/** Opening page (brochure layout) — matches print / web intro */
+/** Primera página — frase bajo el logo */
+export const gabCoverTagline =
+  "Todas las vidas cuentan — te invitamos a conocerlas y a seguir escribiendo su historia con nosotros.";
+
+/** Full GAB intro — shown on the following spread (“Nuestra historia”) */
 export const gabCoverIntro = `GAB somos un grupo de voluntarios que lucha contra el maltrato y el abandono del Bodeguero Andaluz (una de las tres razas más desfavorecidas en España).
 
 Hace un tiempo pudimos unirnos diferentes personas preocupadas por el bienestar de los animales, en especial del Bodeguero Ratonero Andaluz, una de las razas caninas españolas más castigadas en nuestro país, junto con Galgos y Podencos, siendo prácticamente desconocida.

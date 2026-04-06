@@ -254,6 +254,22 @@ h3,
   background-image: none;
 }
 
+/* Portada folleto: página entera en verde GAB */
+.book-page--white:has(.cover--brochure) {
+  background: linear-gradient(
+    160deg,
+    var(--gab-green) 0%,
+    var(--brochure-mint) 38%,
+    var(--brochure-mint-deep) 72%,
+    var(--gab-green-mid) 100%
+  );
+  border-color: rgba(20, 40, 10, 0.12);
+}
+
+.book-page--white:has(.cover--brochure) .book-page__inner {
+  background: transparent;
+}
+
 .book-page--left {
   border-radius: 3px 10px 10px 3px;
 }
@@ -376,14 +392,14 @@ h3,
   font-weight: 600;
 }
 
-/* First page — brochure / flyer layout (logo block + band + mission text) */
+/* First page — brochure / flyer layout (logo block + band + frase) */
 .cover--brochure {
   justify-content: flex-start;
   padding: 1.1rem 1rem 1.15rem;
-  background: #fff;
-  color: var(--ink);
+  background: transparent;
+  color: #142208;
   text-align: center;
-  box-shadow: inset 0 0 0 1px rgba(20, 20, 20, 0.04);
+  min-height: 100%;
 }
 
 .cover-brochure__logo-wrap {
@@ -394,9 +410,9 @@ h3,
   align-items: center;
   justify-content: center;
   padding: 0.65rem;
-  background: linear-gradient(165deg, var(--brochure-mint) 0%, var(--brochure-mint-deep) 100%);
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 4px;
-  box-shadow: 0 2px 12px rgba(20, 20, 20, 0.08);
+  box-shadow: 0 2px 14px rgba(20, 30, 10, 0.12);
 }
 
 .cover-brochure__logo {
@@ -413,15 +429,31 @@ h3,
   max-width: 17.5rem;
   margin: 0.65rem auto 0;
   padding: 0.5rem 0.85rem;
-  background: linear-gradient(165deg, var(--brochure-mint) 0%, var(--brochure-mint-deep) 100%);
+  background: rgba(255, 255, 255, 0.88);
   border-radius: 3px;
   font-family: "Source Sans 3", system-ui, sans-serif;
   font-weight: 700;
   font-size: clamp(0.72rem, 2.4vw, 0.9rem);
   letter-spacing: 0.02em;
   line-height: 1.25;
-  color: #1f1f1f;
-  box-shadow: 0 1px 6px rgba(20, 20, 20, 0.06);
+  color: #1a2a0a;
+  box-shadow: 0 1px 8px rgba(20, 30, 10, 0.1);
+}
+
+.cover-brochure__tagline {
+  flex: 1;
+  width: 100%;
+  max-width: 22rem;
+  margin: 0.9rem auto 0;
+  padding: 0 0.35rem;
+  text-align: center;
+  font-family: "Source Sans 3", system-ui, sans-serif;
+  font-size: clamp(0.78rem, 2.5vw, 0.92rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #142208;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .cover-brochure__body {
@@ -448,9 +480,9 @@ h3,
   margin: 0.75rem 0 0;
   font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.68rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.04em;
-  color: var(--ink-soft);
+  color: rgba(20, 34, 8, 0.72);
 }
 
 .audio-control {
