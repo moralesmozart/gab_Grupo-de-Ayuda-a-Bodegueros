@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { Link } from "react-router-dom";
 import HTMLFlipBook from "react-pageflip";
 import BookPage from "./BookPage";
 import AudioControl from "./AudioControl";
@@ -47,25 +48,42 @@ type FlipBookRef = {
     | undefined;
 };
 
-function useBookDimensions() {
-  const [dims, setDims] = useState({ w: 380, h: 540 });
+/** Align with page-flip: portrait when block width is under minWidth×2 (480px). Stage CSS caps width on small screens. */
+const MOBILE_LAYOUT_MQ = "(max-width: 768px)";
+
+function computeBookLayout(): { w: number; h: number; isMobileLayout: boolean } {
+  if (typeof window === "undefined") return { w: 380, h: 540, isMobileLayout: false };
+  const isMobileLayout = window.matchMedia(MOBILE_LAYOUT_MQ).matches;
+  const vw = window.innerWidth;
+  const sidePadding = isMobileLayout ? 20 : 28;
+  if (isMobileLayout) {
+    const pageW = Math.min(620, Math.max(260, Math.min(vw - sidePadding, 479)));
+    const h = Math.min(780, Math.max(440, Math.round(pageW * 1.38)));
+    return { w: pageW, h, isMobileLayout: true };
+  }
+  const maxTotal = Math.min(vw - sidePadding, 1320);
+  const singlePage = Math.floor(Math.max(260, maxTotal / 2 - 10));
+  const w = Math.min(620, singlePage);
+  const h = Math.min(780, Math.max(420, Math.round(w * 1.38)));
+  return { w, h, isMobileLayout: false };
+}
+
+function useBookLayout() {
+  const [state, setState] = useState(computeBookLayout);
 
   useEffect(() => {
-    const update = () => {
-      const vw = window.innerWidth;
-      const sidePadding = 28;
-      const maxTotal = Math.min(vw - sidePadding, 1320);
-      const singlePage = Math.floor(Math.max(260, maxTotal / 2 - 10));
-      const w = Math.min(620, singlePage);
-      const h = Math.min(780, Math.max(420, Math.round(w * 1.38)));
-      setDims({ w, h });
-    };
+    const mq = window.matchMedia(MOBILE_LAYOUT_MQ);
+    const update = () => setState(computeBookLayout());
     update();
+    mq.addEventListener("change", update);
     window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    return () => {
+      mq.removeEventListener("change", update);
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
-  return dims;
+  return state;
 }
 
 function defaultDeliveryChecklist(dog: Dog): string[] {
@@ -74,7 +92,7 @@ function defaultDeliveryChecklist(dog: Dog): string[] {
 
 export default function GabBook() {
   const bookRef = useRef<FlipBookRef | null>(null);
-  const { w, h } = useBookDimensions();
+  const { w, h, isMobileLayout } = useBookLayout();
   const [page, setPage] = useState(0);
   /** Cover + intro (2) + per dog: historia L/R + estado + fotos + diario + colofón */
   const pagesPerDog = 5;
@@ -112,7 +130,7 @@ export default function GabBook() {
       size: "stretch" as const,
       drawShadow: true,
       flippingTime: 900,
-      usePortrait: false,
+      usePortrait: true,
       startPage: 0,
       startZIndex: 0,
       autoSize: true,
@@ -133,7 +151,7 @@ export default function GabBook() {
   );
 
   return (
-    <div className="gab-book-wrap">
+    <div className={`gab-book-wrap${isMobileLayout ? " gab-book-wrap--mobile" : ""}`}>
       <div className="gab-book-stage">
         <HTMLFlipBook {...bookProps}>
           <BookPage side="right" tone="white">
@@ -144,7 +162,7 @@ export default function GabBook() {
                   src={GAB_LOGO_URL}
                   width={200}
                   height={214}
-                  alt="G.A.B — Grupo de Ayuda a Bodegueros"
+                  alt="Portada del libro solidario — Grupo de Ayuda a Bodegueros"
                   decoding="async"
                 />
               </div>
@@ -163,9 +181,9 @@ export default function GabBook() {
           <BookPage side="right">
             <header className="page-brand">G.A.B</header>
             <div className="story-block">{paragraphs(gabIntroRight)}</div>
-            <a className="cta-inline" href="#pedido">
-              Ver nuestro libro
-            </a>
+            <Link className="cta-inline" to="/reserva">
+              Reserva tu libro
+            </Link>
           </BookPage>
 
           {dogs.flatMap((dog) => [

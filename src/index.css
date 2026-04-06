@@ -218,6 +218,24 @@ h3,
   min-width: min(100%, 520px);
 }
 
+/* One page at a time: page-flip portrait when container is under ~480px; drop 520px min-width on phones */
+@media (max-width: 768px) {
+  .gab-book-stage {
+    min-width: 0;
+    max-width: min(100%, 479px);
+  }
+
+  .gab-book-wrap--mobile .gab-book-nav {
+    gap: 0.35rem;
+    padding-inline: 0.25rem;
+  }
+
+  .gab-book-wrap--mobile .nav-fab {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+}
+
 .gab-flipbook {
   margin: 0 auto;
 }
@@ -898,6 +916,188 @@ h3,
     width: min(200px, 64vw);
     height: min(200px, 64vw);
   }
+}
+
+/* Landing reserva libro (marketplace) */
+.book-landing {
+  min-height: 100vh;
+  padding: 1rem 1.15rem 2.5rem;
+  max-width: 1180px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.book-landing__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(20, 20, 20, 0.08);
+}
+
+.book-landing__back {
+  font-weight: 600;
+  color: var(--accent-dark);
+  text-decoration: none;
+}
+
+.book-landing__back:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.book-landing__site {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.book-landing__site:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.book-landing__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+
+@media (max-width: 840px) {
+  .book-landing__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.book-landing__visual {
+  position: sticky;
+  top: 1rem;
+}
+
+@media (max-width: 840px) {
+  .book-landing__visual {
+    position: static;
+  }
+}
+
+.book-landing__figure {
+  margin: 0;
+  text-align: center;
+}
+
+.book-landing__photo {
+  width: 100%;
+  max-width: min(100%, 400px);
+  height: auto;
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px var(--shadow),
+    0 2px 0 rgba(255, 255, 255, 0.5) inset;
+  background: var(--paper);
+}
+
+.book-landing__caption {
+  margin: 0.65rem 0 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.book-landing__detail {
+  padding-top: 0.25rem;
+}
+
+.book-landing__title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.65rem, 4vw, 2.15rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.book-landing__lead,
+.book-landing__body {
+  margin: 0 0 1rem;
+  font-size: 0.98rem;
+  color: var(--ink);
+  max-width: 36rem;
+}
+
+.book-landing__price-block {
+  margin: 1.35rem 0 1.5rem;
+  padding: 1.1rem 1.2rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(196, 216, 90, 0.18) 0%, rgba(255, 255, 255, 0.65) 100%);
+  border: 1px solid rgba(122, 154, 46, 0.25);
+}
+
+.book-landing__price-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.45rem;
+}
+
+.book-landing__price-row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.book-landing__price-input {
+  width: 5.5rem;
+  font-size: 1.65rem;
+  font-weight: 700;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  padding: 0.25rem 0.5rem;
+  border: 2px solid var(--gab-green-deep);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.book-landing__currency {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.book-landing__price-hint {
+  margin: 0.65rem 0 0;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+  max-width: 32rem;
+  line-height: 1.4;
+}
+
+.book-landing__ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-width: 22rem;
+}
+
+.book-landing__btn-pay {
+  text-align: center;
+}
+
+.book-landing__fineprint {
+  margin: 1.25rem 0 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  max-width: 36rem;
+  line-height: 1.5;
+}
+
+.book-landing__inline-link {
+  color: var(--accent-dark);
+  font-weight: 600;
 }
 
 @media (prefers-reduced-motion: reduce) {
