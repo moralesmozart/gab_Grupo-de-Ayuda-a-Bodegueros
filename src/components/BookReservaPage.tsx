@@ -61,7 +61,7 @@ export default function BookReservaPage() {
         </div>
 
         <div className="book-landing__detail">
-          <h1 className="book-landing__title">Libro «Papás» — historias de bodegueros</h1>
+          <h1 className="book-landing__title">Libro «Familia Gabeira» — historias de bodegueros</h1>
           <p className="book-landing__lead">
             Publicación del <strong>Grupo de Ayuda a Bodegueros</strong> con relatos reales de perros rescatados. Al hojearlo
             conoces su pasado difícil y el trabajo del voluntariado que lucha por una vida digna para el bodeguero en España.
