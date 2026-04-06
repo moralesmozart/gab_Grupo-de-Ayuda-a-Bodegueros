@@ -20,18 +20,17 @@ En producción (GitHub Pages) el `base` de Vite es `/gab_Grupo-de-Ayuda-a-Bodegu
 ## Publicar en GitHub Pages
 
 1. Crea el repositorio `gab_Grupo-de-Ayuda-a-Bodegueros` en GitHub (si aún no existe).
-2. Sube esta rama `main`:
+2. Sube esta rama `main` (repo: [moralesmozart/gab_Grupo-de-Ayuda-a-Bodegueros](https://github.com/moralesmozart/gab_Grupo-de-Ayuda-a-Bodegueros)):
 
    ```bash
-   git remote add origin https://github.com/<tu-usuario>/gab_Grupo-de-Ayuda-a-Bodegueros.git
-   git commit -m "Initial commit: GAB libro preview + GitHub Pages"
+   git remote add origin https://github.com/moralesmozart/gab_Grupo-de-Ayuda-a-Bodegueros.git
    git push -u origin main
    ```
 
 3. En el repo: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-4. Tras el primer push, el workflow **Deploy to GitHub Pages** generará el sitio. La URL será:
+4. Tras el workflow **Deploy to GitHub Pages**, el sitio queda en:
 
-   `https://<tu-usuario>.github.io/gab_Grupo-de-Ayuda-a-Bodegueros/`
+   **https://moralesmozart.github.io/gab_Grupo-de-Ayuda-a-Bodegueros/**
 
 ## Sincronizar textos de perros desde WordPress
 
