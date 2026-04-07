@@ -17,6 +17,8 @@ export type Dog = {
   deliveryChecklist?: readonly string[];
   /** Optional URL for Eva's voice — add when files are ready */
   audioUrl?: string;
+  /** Muestra este emoji en el círculo en lugar de la foto (plantillas) */
+  emojiAvatar?: string;
 };
 
 const profile = (slug: string) => `https://grupoayudabodegueros.org/perro/${slug}/`;

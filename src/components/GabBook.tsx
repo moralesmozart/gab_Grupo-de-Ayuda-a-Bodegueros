@@ -4,10 +4,25 @@ import HTMLFlipBook from "react-pageflip";
 import BookPage from "./BookPage";
 import AudioControl from "./AudioControl";
 import { dogs, type Dog } from "../data/dogs";
-import { gabCoverIntro, gabCoverTagline, gabIntroLeft, gabIntroRight } from "../data/gabIntro";
-import { GAB_ADOPTION, GAB_INSTAGRAM, GAB_LOGO_URL, GAB_SITE } from "../data/constants";
+import {
+  gabColaborarLinks,
+  indiceEntries,
+  sectionIntroAdoptados,
+  sectionIntroAdoptar,
+  sectionIntroHomenaje,
+  sectionIntroQueEsGab,
+  templateAdoptedDog,
+  templateMemorialDog,
+} from "../data/bookStructure";
+import { gabCoverIntro, gabIntroLeft, gabIntroRight } from "../data/gabIntro";
+import { GAB_ADOPTION, GAB_INSTAGRAM, GAB_SITE } from "../data/constants";
 
 const GAB_CONTACT_EMAIL = "info@grupoayudabodegueros.org";
+const COVER_IMAGE_SRC = `${import.meta.env.BASE_URL}cover-familia-gabeira.png`;
+
+const PAGES_BEFORE_DOGS = 6;
+const PAGES_PER_DOG = 5;
+const PAGES_SECTION_TAIL = 2 + PAGES_PER_DOG + 2 + PAGES_PER_DOG + 1;
 
 function paragraphs(text: string): ReactNode {
   return text
@@ -16,7 +31,6 @@ function paragraphs(text: string): ReactNode {
     .map((block, i) => <p key={i}>{block.trim()}</p>);
 }
 
-/** Justified story blocks; highlights the GAB contact email like the print layout */
 function paragraphsWithBoldEmail(text: string): ReactNode {
   const emailRe = new RegExp(`(${GAB_CONTACT_EMAIL.replace(/\./g, "\\.")})`, "g");
   return text
@@ -48,7 +62,6 @@ type FlipBookRef = {
     | undefined;
 };
 
-/** Align with page-flip: portrait when block width is under minWidth×2 (480px). Stage CSS caps width on small screens. */
 const MOBILE_LAYOUT_MQ = "(max-width: 768px)";
 
 function computeBookLayout(): { w: number; h: number; isMobileLayout: boolean } {
@@ -90,13 +103,17 @@ function defaultDeliveryChecklist(dog: Dog): string[] {
   return [`${dog.age} · ${dog.size}`, "Condiciones y documentación: consulta su ficha en grupoayudabodegueros.org"];
 }
 
+function countFlipPages(nDogs: number): number {
+  return PAGES_BEFORE_DOGS + nDogs * PAGES_PER_DOG + PAGES_SECTION_TAIL;
+}
+
 export default function GabBook() {
   const bookRef = useRef<FlipBookRef | null>(null);
   const { w, h, isMobileLayout } = useBookLayout();
+  const [bookOpened, setBookOpened] = useState(false);
   const [page, setPage] = useState(0);
-  /** Cover + intro (2) + per dog: historia L/R + estado + fotos + diario + colofón */
-  const pagesPerDog = 5;
-  const pageCount = 1 + 2 + dogs.length * pagesPerDog + 1;
+
+  const pageCount = useMemo(() => countFlipPages(dogs.length), []);
 
   const onFlip = useCallback((e: { data: number }) => {
     setPage(typeof e.data === "number" ? e.data : 0);
@@ -118,6 +135,8 @@ export default function GabBook() {
     bookRef.current?.pageFlip?.()?.flip?.(0, "bottom");
   }, []);
 
+  const openBook = useCallback(() => setBookOpened(true), []);
+
   const bookProps = useMemo(
     () => ({
       ref: bookRef,
@@ -130,7 +149,7 @@ export default function GabBook() {
       size: "stretch" as const,
       drawShadow: true,
       flippingTime: 900,
-      usePortrait: true,
+      usePortrait: isMobileLayout,
       startPage: 0,
       startZIndex: 0,
       autoSize: true,
@@ -147,103 +166,209 @@ export default function GabBook() {
       onFlip,
       onInit,
     }),
-    [w, h, onFlip, onInit],
+    [w, h, isMobileLayout, onFlip, onInit],
+  );
+
+  const dogPages = useMemo(
+    () =>
+      dogs.flatMap((dog) => [
+        <BookPage key={`${dog.slug}-h1`} side="left">
+          <DogPageLeft dog={dog} />
+        </BookPage>,
+        <BookPage key={`${dog.slug}-h2`} side="right">
+          <DogPageRight dog={dog} />
+        </BookPage>,
+        <BookPage key={`${dog.slug}-estado`} side="left">
+          <DogEstadoActualBlank dog={dog} />
+        </BookPage>,
+        <BookPage key={`${dog.slug}-fotos`} side="right">
+          <DogContinuaFotosBlank dog={dog} />
+        </BookPage>,
+        <BookPage key={`${dog.slug}-texto`} side="left">
+          <DogContinuaTextoBlank dog={dog} />
+        </BookPage>,
+      ]),
+    [],
+  );
+
+  const templateAdoptedPages = useMemo(
+    () => [
+      <BookPage key="tpl-adop-1" side="left">
+        <DogPageLeft dog={templateAdoptedDog} />
+      </BookPage>,
+      <BookPage key="tpl-adop-2" side="right">
+        <DogPageRight dog={templateAdoptedDog} />
+      </BookPage>,
+      <BookPage key="tpl-adop-3" side="left">
+        <DogEstadoActualBlank dog={templateAdoptedDog} />
+      </BookPage>,
+      <BookPage key="tpl-adop-4" side="right">
+        <DogContinuaFotosBlank dog={templateAdoptedDog} />
+      </BookPage>,
+      <BookPage key="tpl-adop-5" side="left">
+        <DogContinuaTextoBlank dog={templateAdoptedDog} />
+      </BookPage>,
+    ],
+    [],
+  );
+
+  const templateMemorialPages = useMemo(
+    () => [
+      <BookPage key="tpl-mem-1" side="left">
+        <DogPageLeft dog={templateMemorialDog} />
+      </BookPage>,
+      <BookPage key="tpl-mem-2" side="right">
+        <DogPageRight dog={templateMemorialDog} />
+      </BookPage>,
+      <BookPage key="tpl-mem-3" side="left">
+        <DogEstadoActualBlank dog={templateMemorialDog} />
+      </BookPage>,
+      <BookPage key="tpl-mem-4" side="right">
+        <DogContinuaFotosBlank dog={templateMemorialDog} />
+      </BookPage>,
+      <BookPage key="tpl-mem-5" side="left">
+        <DogContinuaTextoBlank dog={templateMemorialDog} />
+      </BookPage>,
+    ],
+    [],
   );
 
   return (
     <div className={`gab-book-wrap${isMobileLayout ? " gab-book-wrap--mobile" : ""}`}>
-      <div className="gab-book-stage">
-        <HTMLFlipBook {...bookProps}>
-          <BookPage side="right" tone="white">
-            <div className="cover cover--brochure">
-              <div className="cover-brochure__logo-wrap">
-                <img
-                  className="cover-brochure__logo"
-                  src={GAB_LOGO_URL}
-                  width={200}
-                  height={214}
-                  alt="Portada del libro solidario — Grupo de Ayuda a Bodegueros"
-                  decoding="async"
-                />
+      <div className={`gab-book-stage${!bookOpened ? " gab-book-stage--closed" : ""}`}>
+        {!bookOpened ? (
+          <button type="button" className="gab-book-closed" onClick={openBook} aria-label="Abrir el libro Familia Gabeira">
+            <img
+              className="gab-book-closed__cover"
+              src={COVER_IMAGE_SRC}
+              width={720}
+              height={1280}
+              alt="Familia Gabeira — Esta es nuestra historia. Toca para abrir el libro."
+              decoding="async"
+            />
+            <span className="gab-book-closed__hint">Pulsa para abrir el libro</span>
+          </button>
+        ) : (
+          <HTMLFlipBook {...bookProps}>
+            <BookPage side="left">
+              <header className="page-brand">G.A.B</header>
+              <h3 className="section-title">Nuestra historia</h3>
+              <div className="story-block">
+                {paragraphs(gabCoverIntro)}
+                {paragraphs(gabIntroLeft)}
               </div>
-              <div className="cover-brochure__banner">Grupo de Ayuda a Bodegueros</div>
-              <p className="cover-brochure__tagline">{gabCoverTagline}</p>
-              <p className="cover-brochure__hint">Pasa la página para continuar</p>
-            </div>
-          </BookPage>
+            </BookPage>
 
-          <BookPage side="left">
-            <header className="page-brand">G.A.B</header>
-            <h3 className="section-title">Nuestra historia</h3>
-            <div className="story-block">
-              {paragraphs(gabCoverIntro)}
-              {paragraphs(gabIntroLeft)}
-            </div>
-          </BookPage>
+            <BookPage side="right">
+              <header className="page-brand">G.A.B</header>
+              <div className="story-block">{paragraphs(gabIntroRight)}</div>
+              <Link className="cta-inline" to="/reserva">
+                Reserva tu libro
+              </Link>
+            </BookPage>
 
-          <BookPage side="right">
-            <header className="page-brand">G.A.B</header>
-            <div className="story-block">{paragraphs(gabIntroRight)}</div>
-            <Link className="cta-inline" to="/reserva">
-              Reserva tu libro
-            </Link>
-          </BookPage>
+            <BookPage side="left">
+              <IndicePage />
+            </BookPage>
 
-          {dogs.flatMap((dog) => [
-            <BookPage key={`${dog.slug}-h1`} side="left">
-              <DogPageLeft dog={dog} />
-            </BookPage>,
-            <BookPage key={`${dog.slug}-h2`} side="right">
-              <DogPageRight dog={dog} />
-            </BookPage>,
-            <BookPage key={`${dog.slug}-estado`} side="left">
-              <DogEstadoActualBlank dog={dog} />
-            </BookPage>,
-            <BookPage key={`${dog.slug}-fotos`} side="right">
-              <DogContinuaFotosBlank dog={dog} />
-            </BookPage>,
-            <BookPage key={`${dog.slug}-texto`} side="left">
-              <DogContinuaTextoBlank dog={dog} />
-            </BookPage>,
-          ])}
+            <BookPage side="right">
+              <SectionIntroPage title="¿Qué es GAB y cómo puedo colaborar?" body={sectionIntroQueEsGab} links={gabColaborarLinks} />
+            </BookPage>
 
-          <BookPage side="left">
-            <div className="cover cover--back">
-              <h2 className="cover__title cover__title--small">Gracias por leernos</h2>
-              <p className="cover__subtitle">
-                Sigue el trabajo de GAB en la web y ayuda a que estos perros dejen de ser invisibles.
-              </p>
-              <a className="cover__link" href={GAB_SITE} target="_blank" rel="noreferrer">
-                grupoayudabodegueros.org
-              </a>
-              <a className="cover__link" href={GAB_ADOPTION} target="_blank" rel="noreferrer">
-                Perros en adopción
-              </a>
-            </div>
-          </BookPage>
-        </HTMLFlipBook>
+            <BookPage side="left">
+              <SectionIntroPage title="Cachorros para adoptar" body={sectionIntroAdoptar} />
+            </BookPage>
+
+            <BookPage side="right">
+              <div className="section-bridge">
+                <p className="section-bridge__kicker">A continuación</p>
+                <p className="section-bridge__text">Historias de perros que buscan familia. Pasa la página para comenzar.</p>
+              </div>
+            </BookPage>
+
+            {dogPages}
+
+            <BookPage side="left">
+              <SectionIntroPage title="Cachorros adoptados" body={sectionIntroAdoptados} />
+            </BookPage>
+
+            <BookPage side="right">
+              <div className="section-bridge">
+                <p className="section-bridge__kicker">Plantilla</p>
+                <p className="section-bridge__text">La siguiente página es un ejemplo con huecos para foto y notas a mano.</p>
+              </div>
+            </BookPage>
+
+            {templateAdoptedPages}
+
+            <BookPage side="left">
+              <SectionIntroPage title="Homenaje" body={sectionIntroHomenaje} />
+            </BookPage>
+
+            <BookPage side="right">
+              <div className="section-bridge">
+                <p className="section-bridge__kicker">Plantilla</p>
+                <p className="section-bridge__text">Espacio respetuoso para recordar a quienes ya no están.</p>
+              </div>
+            </BookPage>
+
+            {templateMemorialPages}
+
+            <BookPage side="left">
+              <div className="cover cover--back">
+                <h2 className="cover__title cover__title--small">Gracias por leernos</h2>
+                <p className="cover__subtitle">
+                  Sigue el trabajo de GAB en la web y ayuda a que estos perros dejen de ser invisibles.
+                </p>
+                <a className="cover__link" href={GAB_SITE} target="_blank" rel="noreferrer">
+                  grupoayudabodegueros.org
+                </a>
+                <a className="cover__link" href={GAB_ADOPTION} target="_blank" rel="noreferrer">
+                  Perros en adopción
+                </a>
+              </div>
+            </BookPage>
+          </HTMLFlipBook>
+        )}
       </div>
 
       <nav className="gab-book-nav" aria-label="Páginas del libro">
-        <button type="button" className="nav-fab nav-fab--prev" onClick={flipPrev} aria-label="Página anterior">
+        <button
+          type="button"
+          className="nav-fab nav-fab--prev"
+          onClick={flipPrev}
+          disabled={!bookOpened}
+          aria-label="Página anterior"
+        >
           <span className="nav-fab__arc" aria-hidden />
           ‹
         </button>
         <button
           type="button"
           className="gab-book-nav__start"
-          onClick={flipToStart}
-          disabled={page === 0}
-          aria-label="Volver al inicio del libro"
+          onClick={bookOpened ? flipToStart : openBook}
+          disabled={bookOpened && page === 0}
+          aria-label={bookOpened ? "Volver al inicio del libro" : "Abrir el libro"}
         >
-          Inicio
+          {bookOpened ? "Inicio" : "Abrir"}
         </button>
         <span className="gab-book-nav__status" aria-live="polite">
-          Página {page + 1} / {pageCount}
+          {bookOpened ? (
+            <>
+              Página {page + 1} / {pageCount}
+            </>
+          ) : (
+            <>Portada · pulsa la imagen o Abrir</>
+          )}
         </span>
-        <button type="button" className="nav-fab nav-fab--next" onClick={flipNext} aria-label="Página siguiente">
+        <button
+          type="button"
+          className="nav-fab nav-fab--next"
+          onClick={bookOpened ? flipNext : openBook}
+          aria-label={bookOpened ? "Página siguiente" : "Abrir el libro"}
+        >
           ›
-          <span className="nav-fab__arc nav-fab__arc--mirror" aria-hidden />
+          <span className="nav-fab__arc nav-fab--mirror" aria-hidden />
         </button>
       </nav>
       <p className="gab-book-follow">
@@ -251,6 +376,52 @@ export default function GabBook() {
           Síguenos en Instagram — @gab_grupo.ayuda.bodegueros
         </a>
       </p>
+    </div>
+  );
+}
+
+function IndicePage() {
+  return (
+    <div className="book-indice">
+      <header className="page-brand">G.A.B</header>
+      <h3 className="section-title book-indice__title">Índice</h3>
+      <ol className="book-indice__list">
+        {indiceEntries.map((line, i) => (
+          <li key={i} className="book-indice__item">
+            <span className="book-indice__num">{i + 1}.</span>
+            <span className="book-indice__text">{line}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function SectionIntroPage({
+  title,
+  body,
+  links,
+}: {
+  title: string;
+  body: string;
+  links?: readonly { label: string; href: string }[];
+}) {
+  return (
+    <div className="section-intro">
+      <header className="page-brand">G.A.B</header>
+      <h3 className="section-title section-intro__title">{title}</h3>
+      <div className="story-block section-intro__body">{paragraphs(body)}</div>
+      {links && links.length > 0 ? (
+        <ul className="section-intro__links">
+          {links.map((l) => (
+            <li key={l.href}>
+              <a href={l.href} target="_blank" rel="noreferrer" className="section-intro__link">
+                {l.label} →
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }
@@ -263,14 +434,20 @@ function DogPageLeft({ dog }: { dog: Dog }) {
       <p className="dog-mi-historia__brand">G.A.B</p>
 
       <div className="dog-mi-historia__hero">
-        <div className="dog-mi-historia__ring">
-          <img
-            src={dog.photoUrl ?? dogPhotoUrl(dog.slug)}
-            alt={`Retrato de ${dog.name}`}
-            width={280}
-            height={280}
-            loading="lazy"
-          />
+        <div className={`dog-mi-historia__ring${dog.emojiAvatar ? " dog-mi-historia__ring--emoji" : ""}`}>
+          {dog.emojiAvatar ? (
+            <span className="dog-mi-historia__emoji" role="img" aria-hidden>
+              {dog.emojiAvatar}
+            </span>
+          ) : (
+            <img
+              src={dog.photoUrl ?? dogPhotoUrl(dog.slug)}
+              alt={`Retrato de ${dog.name}`}
+              width={280}
+              height={280}
+              loading="lazy"
+            />
+          )}
         </div>
         <p className="dog-mi-historia__name">{dog.name}</p>
       </div>
@@ -288,28 +465,33 @@ function DogPageLeft({ dog }: { dog: Dog }) {
         </ul>
       </section>
 
-      <div className="dog-mi-historia__audio">
-        <AudioControl label="Escuchar historia" src={dog.audioUrl} />
-      </div>
+      {dog.audioUrl ? (
+        <div className="dog-mi-historia__audio">
+          <AudioControl label="Escuchar historia" src={dog.audioUrl} />
+        </div>
+      ) : null}
     </div>
   );
 }
 
 function DogPageRight({ dog }: { dog: Dog }) {
+  const isPlantilla = dog.slug.startsWith("plantilla-");
+
   return (
     <div className="dog-continua">
       <p className="dog-continua__kicker">Continúa la historia de {dog.name}</p>
       <div className="dog-mi-historia__body dog-mi-historia__body--continues">
         {paragraphsWithBoldEmail(dog.storyRight)}
       </div>
-      <a className="profile-link" href={dog.profileUrl} target="_blank" rel="noreferrer">
-        Más info: {dog.name} en la web →
-      </a>
+      {!isPlantilla ? (
+        <a className="profile-link" href={dog.profileUrl} target="_blank" rel="noreferrer">
+          Más info: {dog.name} en la web →
+        </a>
+      ) : null}
     </div>
   );
 }
 
-/** Plantilla impresa: novedades / estado (pontilhado) */
 function DogEstadoActualBlank({ dog }: { dog: Dog }) {
   return (
     <div className="dog-blank dog-blank--estado">
@@ -340,7 +522,6 @@ function DogEstadoActualBlank({ dog }: { dog: Dog }) {
   );
 }
 
-/** Plantilla: huecos punteados para fotos (familias adoptivas) */
 function DogContinuaFotosBlank({ dog }: { dog: Dog }) {
   return (
     <div className="dog-blank dog-blank--fotos">
@@ -380,7 +561,6 @@ function DogContinuaFotosBlank({ dog }: { dog: Dog }) {
   );
 }
 
-/** Plantilla: líneas punteadas para texto (relato del adoptante) */
 function DogContinuaTextoBlank({ dog }: { dog: Dog }) {
   return (
     <div className="dog-blank dog-blank--texto">
